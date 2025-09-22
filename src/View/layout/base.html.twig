@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/x-icon" href="/../assets/images/favicon.ico">
+  <title>{% block title %}Prendre Soin de Soi L'Essentiel{% endblock %}</title>
+  {% block meta %}
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+  {% endblock %}
+  <link rel="stylesheet" href="/assets/css/style1.css">
+  {% block stylesheets %}{% endblock %}
+</head>
+<body>
+  {% include 'partials/_header.html.twig' %}
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+  {% block javascripts %}{% endblock %}
+  {% include 'partials/_footer.html.twig' %}
+  <script src="/assets/js/script.js"></script>
+  <script src="https://kit.fontawesome.com/fd69216cb8.js" crossorigin="anonymous"></script>
+  <script src="https://elfsightcdn.com/platform.js" async></script>
+  <script>
+  (function(){
+    const logo = document.querySelector('.brand') || document.body;
+    let t=null;
+    logo.addEventListener('pointerdown', ()=>{ t=setTimeout(()=>{ window.location.href='/admin/login'; }, 2000); });
+    logo.addEventListener('pointerup', ()=>{ clearTimeout(t); });
+    document.addEventListener('keydown', (e)=>{
+      if(e.ctrlKey && e.shiftKey && e.key.toLowerCase()==='a'){ window.location.href='/admin/login'; }
+    });
+  })();
+</script>
+  
+</body>
+</html>

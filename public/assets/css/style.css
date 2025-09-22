@@ -1,5 +1,206 @@
+:root {
+    --color-bg: #ffffff;
+    --color-surface: #f0f4f9;
+    --color-text: #222222;
+    --color-muted: #5f6368; 
+    --color-border: #e5e7eb;
+    --color-primary: #c05a5a;
+    --color-primary-contrast: #ffffff;
+
+    --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+        "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    --text-base: 16px;
+    --lh: 1.6;
+
+    --radius-sm: 8px;
+    --radius: 12px;
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+    --shadow: 0 10px 15px rgba(0, 0, 0, 0.08);
+
+    --space-1: 0.25rem; /* 4px  */
+    --space-2: 0.5rem; /* 8px  */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem; /* 16px */
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+
+    --container: 1100px;
+}
 * {
 margin: 0;
 padding: 0;
 box-sizing: border-box;
+}
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
+ul,
+ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font: 400 var(--text-base) / var(--lh) var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+    margin: 0 0 var(--space-4);
+    line-height: 1.25;
+}
+h1 {
+    font-size: clamp(1.75rem, 2vw + 1rem, 2.25rem);
+    font-weight: 700;
+}
+h2 {
+    font-size: clamp(1.5rem, 1.5vw + 1rem, 1.75rem);
+    font-weight: 700;
+}
+h3 {
+    font-size: clamp(1.25rem, 1vw + 1rem, 1.35rem);
+    font-weight: 600;
+}
+p {
+    margin: 0 0 var(--space-4);
+    color: var(--color-text);
+}
+.lead {
+    color: var(--color-muted);
+}
+
+.container {
+    width: min(100%, var(--container));
+    margin-inline: auto;
+    padding-inline: var(--space-4);
+}
+.section {
+    padding-block: var(--space-10);
+}
+.card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: var(--space-6);
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.04s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+.btn:active {
+    transform: translateY(1px);
+}
+
+.btn-primary {
+    background: var(--color-primary);
+    color: var(--color-primary-contrast);
+    box-shadow: var(--shadow-sm);
+}
+.btn-primary:hover {
+    filter: brightness(1.05);
+}
+
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+}
+.nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    height: 64px;
+}
+.nav .brand {
+    font-weight: 800;
+    color: var(--color-text);
+}
+.nav-list {
+    display: flex;
+    gap: var(--space-4);
+}
+.nav-list a {
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: var(--color-muted);
+}
+.nav-list a:hover {
+    background: #f6f7f9;
+    color: var(--color-text);
+}
+
+.grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.tile {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+}
+.tile img {
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
+.tile .tile-body {
+    padding: var(--space-4);
+}
+.tile h3 {
+    margin-bottom: var(--space-2);
+}
+
+.site-footer {
+    margin-top: var(--space-12);
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-6);
+    color: var(--color-muted);
+}
+.hero {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-12) var(--space-8);
+    text-align: center;
+    background-image: url('/assets/images/fond.png');
+    background-size:cover;
+}
+.hero p {
+    color: var(--color-muted);
+}
+.hero .actions {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
 }

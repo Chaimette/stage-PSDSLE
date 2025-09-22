@@ -1,0 +1,47 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block title %}Contactez-nous ! -
+	{{ title }}
+{% endblock %}
+
+{% block meta_description %}
+	Contactez-nous pour toute information ou prise de rendez-vous. Institut de beauté et bien-être, à votre écoute pour répondre à vos besoins.
+{% endblock %}
+{% block content %}
+<section class="hero-section">
+  <div class="hero-content">
+   <img src="/assets/images/logo-final-trans.png" alt="" style="max-width:400px;">
+  </div>
+</section>
+	<section class="contact-main">
+        <div class="contact-header">
+            <h1>Contactez-moi !</h1>
+			<p>Pour toute information, vous pouvez me contacter par téléphone (appel ou SMS) ou email, je reviens vers vous dès que possible !</p>
+        </div>
+		<div class="contact-container">
+			
+
+			<div class="contact-details">
+				<div class="contact-item">
+					<h2>Téléphone</h2>
+					<p>
+						<a href="tel:+33612345678">+33 6 12 34 56 78</a>
+					</p>
+				</div>
+				<div class="contact-item">
+					<h2>Email</h2>
+					<p>
+						<a href="mailto: prendresoindesoilessentiel@hotmail.com">
+							prendresoindesoilessentiel@hotmail.com</a>
+					</p>
+				</div>
+				<div class="contact-item">
+					<h2>Adresse</h2>
+					<p>123 Rue du Bien-Être, 75000 Paris, France</p>
+				</div>
+			</div>
+		</section>
+	{% endblock %}
+	{% block stylesheets %}
+		<link rel="stylesheet" href="/assets/css/contact.css">
+	{% endblock %}

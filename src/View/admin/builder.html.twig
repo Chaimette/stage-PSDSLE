@@ -1,0 +1,445 @@
+{% extends 'layout/base.html.twig' %}
+{% block title %}Admin – Builder{% endblock %}
+
+{% block content %}
+<h1>Administration – Builder</h1>
+
+{# -- Bandeau d'erreurs serveur optionnel -- #}
+{% if errors is defined and errors %}
+  <div class="alert error">
+    <strong>Impossible d’enregistrer :</strong>
+    <ul>
+      {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+<form method="post" action="/admin" id="builderForm" class="flow">
+  <input type="hidden" name="csrf" value="{{ csrf }}"/>
+
+  <div class="builder-toolbar">
+    <button type="button" class="btn" onclick="addSection()">+ Ajouter une section</button>
+    <button type="submit" class="btn btn-primary">💾 Sauvegarder</button>
+    <button type="button" class="btn btn-cancel" ><a href="/admin" target="_self">❌ Annuler</a>
+</button>
+
+  </div>
+
+  <div id="sectionsWrap" class="sections-wrap">
+    {% for s in tree %}
+      <details class="admin-section" {% if loop.first %}open{% endif %}>
+        <summary>
+          <span class="section-title">Section</span>
+          <input class="inline-input" name="sections[{{ s.id }}][nom]" value="{{ s.nom }}" placeholder="Nom" required>
+          <input class="inline-input slug" name="sections[{{ s.id }}][slug]" value="{{ s.slug }}" placeholder="slug" required>
+          {# 👇 Ordre d'affichage (section) #}
+          <label class="stack mini">
+            <span>Ordre</span>
+            <input class="inline-input sm order-input" type="number" name="sections[{{ s.id }}][ordre_affichage]" value="{{ s.ordre_affichage }}" min="1" required>
+          </label>
+          <label class="check"><input type="checkbox" name="sections[{{ s.id }}][actif]" {{ s.actif ? 'checked' : '' }}> Actif</label>
+          <label class="danger"><input type="checkbox" name="sections[{{ s.id }}][delete]"> Supprimer</label>
+        </summary>
+
+        <div class="section-body">
+          <label class="stack">
+            <span>Description</span>
+            <textarea name="sections[{{ s.id }}][description]" rows="2">{{ s.description }}</textarea>
+          </label>
+
+          <label class="stack">
+            <span>Méta description</span>
+            <input name="sections[{{ s.id }}][meta_description]" value="{{ s.meta_description }}">
+          </label>
+
+          <div class="section-actions">
+            <button type="button" class="btn btn-soft" onclick="addPrestation('{{ s.id }}')">+ Ajouter une prestation</button>
+          </div>
+
+          <div class="prestations" id="prestations-{{ s.id }}">
+            {% for p in s.prestations %}
+              <details class="admin-prestation">
+                <summary>
+                  <span class="presta-title">Prestation</span>
+                  <input type="hidden" name="prestations[{{ p.id }}][section_id]" value="{{ s.id }}">
+                  <input class="inline-input" name="prestations[{{ p.id }}][nom]" value="{{ p.nom }}" placeholder="Nom" required>
+                  {# 👇 Ordre d'affichage (prestation) #}
+                  <label class="stack mini">
+                    <span>Ordre</span>
+                    <input class="inline-input sm order-input" type="number" name="prestations[{{ p.id }}][ordre_affichage]" value="{{ p.ordre_affichage }}" min="1" required>
+                  </label>
+                  <label class="check"><input type="checkbox" name="prestations[{{ p.id }}][actif]" {{ p.actif ? 'checked' : '' }}> Actif</label>
+                  <label class="danger"><input type="checkbox" name="prestations[{{ p.id }}][delete]"> Supprimer</label>
+                </summary>
+
+                <div class="presta-body">
+                  <label class="stack">
+                    <span>Description</span>
+                    <textarea name="prestations[{{ p.id }}][description]" rows="2">{{ p.description }}</textarea>
+                  </label>
+
+                  <div class="presta-actions">
+                    <button type="button" class="btn btn-soft" onclick="addTarif('{{ p.id }}')">+ Ajouter un tarif</button>
+                  </div>
+
+                  <div class="tarifs" id="tarifs-{{ p.id }}">
+                    {% for t in p.tarifs %}
+                      <div class="admin-tarif">
+                        <input type="hidden" name="tarifs[{{ t.id }}][prestation_id]" value="{{ p.id }}">
+                        <input class="inline-input sm" name="tarifs[{{ t.id }}][duree]" value="{{ t.duree }}" placeholder="Durée">
+                        <input class="inline-input sm" name="tarifs[{{ t.id }}][nb_seances]" value="{{ t.nb_seances }}" placeholder="Nb séances">
+                        <input class="inline-input sm" type="number" step="0.01" name="tarifs[{{ t.id }}][prix]" value="{{ t.prix }}" placeholder="Prix">
+                        {# 👇 Ordre d'affichage (tarif) #}
+                        <label class="stack mini">
+                          <span>Ordre</span>
+                          <input class="inline-input sm order-input" type="number" name="tarifs[{{ t.id }}][ordre_affichage]" value="{{ t.ordre_affichage }}" min="1" required>
+                        </label>
+                        <label class="danger"><input type="checkbox" name="tarifs[{{ t.id }}][delete]"> Supprimer</label>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </details>
+            {% endfor %}
+          </div>
+        </div>
+      </details>
+    {% else %}
+      <p>Aucune section. Ajoute ta première ✨</p>
+    {% endfor %}
+  </div>
+</form>
+
+<style>
+.flow > * + * { margin-top: 1rem; }
+.builder-toolbar { display:flex; gap:.5rem; align-items:center; margin:.5rem 0 1rem; }
+.btn { padding:.6rem .9rem; border-radius:10px; border:1px solid #ddd; background:#f6f6f6; cursor:pointer; }
+.btn:hover { background:#eee; }
+.btn-primary { background:#2e7d32; color:#fff; border-color:#2e7d32; }
+.btn-primary:hover { filter:brightness(.95); }
+.btn-soft { background:#faf5ef; border-color:#ead9c5; }
+
+.inline-input { padding:.5rem .6rem; border:1px solid #ddd; border-radius:8px; min-width:180px; }
+.inline-input.sm { min-width:120px; }
+.stack { display:flex; flex-direction:column; gap:.35rem; }
+.stack.mini { min-width: 110px; }
+
+.sections-wrap { display:flex; flex-direction:column; gap:1rem; }
+.admin-section { background:#fff9f1; border:1px solid #efdcc6; border-radius:12px; padding:.25rem 1rem; }
+.admin-prestation { background:#f7fbff; border:1px solid #cfe3f6; border-radius:12px; padding:.25rem 1rem; margin-top:.75rem; }
+.admin-tarif { background:#f9f9f9; border:1px dashed #ddd; border-radius:10px; padding:.5rem; display:flex; gap:.5rem; align-items:center; margin-top:.5rem; }
+
+details > summary { list-style:none; cursor:pointer; display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; padding:.6rem 0; }
+details > summary::-webkit-details-marker { display:none; }
+.section-title, .presta-title { font-weight:600; padding:.25rem .55rem; border-radius:8px; }
+.section-title { background:#f1e2c9; }
+.presta-title { background:#dcecff; }
+
+.section-body, .presta-body { padding:.5rem 0 1rem; border-top:1px dashed #e4cfb7; }
+.presta-body { border-top-color:#cfe3f6; }
+.section-actions, .presta-actions { margin-top:.5rem; }
+
+.check { display:flex; align-items:center; gap:.35rem; }
+.danger { color:#800; display:flex; align-items:center; gap:.35rem; }
+.slug { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+/* alert */
+.alert.error { background:#fee; border:1px solid #f6c; color:#600; padding:1rem; border-radius:10px; }
+.field-error { outline: 2px solid #d32f2f; background:#fff5f5; }
+</style>
+
+<script>
+let newSec = 0, newPresta = 0, newTarif = 0;
+
+function slugify(str){
+  return (str || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,'-')
+    .replace(/(^-|-$)/g,'')
+    .substring(0, 100);
+}
+
+// Auto-slug: si slug vide, on remplit à la volée
+document.addEventListener('input', (e)=>{
+  const el = e.target;
+  if (!(el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)) return;
+  const m = el.name && el.name.match(/^sections\[(.+?)\]\[nom\]$/);
+  if (m) {
+    const secId = m[1];
+    const slugInput = document.querySelector(`input[name="sections[${secId}][slug]"]`);
+    if (slugInput && !slugInput.value) slugInput.value = slugify(el.value);
+  }
+});
+
+// ADDERS
+function addSection(){
+  const id = 'new' + (++newSec);
+  const wrap = document.getElementById('sectionsWrap');
+  const tpl = `
+  <details class="admin-section card">
+    <summary>
+      <span class="section-title">Section</span>
+      <input class="inline-input" name="sections[${id}][nom]" placeholder="Nom" required>
+      <input class="inline-input slug" name="sections[${id}][slug]" placeholder="slug" required>
+      <label class="stack mini"><span>Ordre</span><input class="inline-input sm order-input" type="number" name="sections[${id}][ordre_affichage]" value="0" min="1" required></label>
+      <label class="check"><input type="checkbox" name="sections[${id}][actif]" checked> Actif</label>
+      <label class="danger"><input type="checkbox" name="sections[${id}][delete]"> Supprimer</label>
+                  <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+
+    </summary>
+    <div class="section-body card">
+      <label class="stack"><span>Description</span>
+        <textarea name="sections[${id}][description]" rows="2"></textarea>
+      </label>
+      <label class="stack"><span>Méta description</span>
+        <input name="sections[${id}][meta_description]">
+      </label>
+      <div class="section-actions">
+        <button type="button" class="btn btn-soft" onclick="addPrestation('${id}')">+ Ajouter une prestation</button>
+      </div>
+      <div class="prestations" id="prestations-${id}"></div>
+            <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+
+    </div>
+  </details>`;
+  wrap.insertAdjacentHTML('beforeend', tpl);
+}
+
+function addPrestation(sectionId){
+  const id = 'newP' + (++newPresta);
+  const wrap = document.getElementById('prestations-' + sectionId);
+  const div = document.createElement('div');
+  div.className = 'card prestation admin-prestation';
+  div.dataset.id = id;
+  div.innerHTML = `
+    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+      <strong>Nouvelle prestation</strong>
+      <input type="hidden" name="prestations[${id}][section_id]" value="${sectionId}">
+      <label>Nom <input name="prestations[${id}][nom]" required></label>
+      <label>Ordre <input type="number" name="prestations[${id}][ordre_affichage]" value="0" min="0" required></label>
+      <label style="display:flex;align-items:center;gap:.25rem">
+        <input type="checkbox" name="prestations[${id}][actif]" checked> Actif
+      </label>
+      <label style="flex:1 1 100%">Description
+        <textarea name="prestations[${id}][description]" rows="2"></textarea>
+      </label>
+      <button type="button" class="btn" onclick="addTarif('${id}')">+ Tarif</button>
+      <label style="color:#800"><input type="checkbox" name="prestations[${id}][delete]"> Supprimer</label>
+      <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+    </div>
+    <div class="tarifs flow" id="tarifs-${id}"></div>
+  `;
+  wrap.appendChild(div);
+}
+function cancelBlock(btn){
+  const card = btn.closest('.card');
+  if (!card) return;
+
+  // petite confirmation optionnelle
+  if (card.dataset.id.startsWith('new')) {
+    // si c'est un élément "nouveau" non encore sauvegardé → suppression directe
+    card.remove();
+  } else {
+    // si c'est un élément existant en BDD → on simule un "supprimer"
+    const deleteBox = card.querySelector('input[name*="[delete]"]');
+    if (deleteBox) {
+      deleteBox.checked = true;
+      card.style.opacity = 0.5;
+    }
+  }
+}
+function addTarif(prestationId){
+  const id = 'newT' + (++newTarif);
+  const wrap = document.getElementById('tarifs-' + prestationId);
+  const tpl = `
+  <div class="admin-tarif">
+    <input type="hidden" name="tarifs[${id}][prestation_id]" value="${prestationId}">
+    <input class="inline-input sm" name="tarifs[${id}][duree]" placeholder="Durée">
+    <input class="inline-input sm" name="tarifs[${id}][nb_seances]" placeholder="Nb séances">
+    <input class="inline-input sm" type="number" step="0.01" name="tarifs[${id}][prix]" value="0" placeholder="Prix">
+    <label class="stack mini"><span>Ordre</span><input class="inline-input sm order-input" type="number" name="tarifs[${id}][ordre_affichage]" value="0" min="1" required></label>
+    <label class="danger"><input type="checkbox" name="tarifs[${id}][delete]"> Supprimer</label>
+  </div>`;
+  wrap.insertAdjacentHTML('beforeend', tpl);
+}
+
+/* ===== Validation front (doublons + valeurs) ===== */
+document.getElementById('builderForm').addEventListener('submit', function(e){
+  // reset styles
+  this.querySelectorAll('.field-error').forEach(el=>el.classList.remove('field-error'));
+
+  const errors = [];
+
+  // 1) Sections: noms et ordres uniques
+  const sectionBlocks = Array.from(document.querySelectorAll('.admin-section'));
+  const sectionNames = new Map();
+  const sectionOrders = new Map();
+
+  sectionBlocks.forEach(sec=>{
+    const del = sec.querySelector('input[name*="[delete]"]')?.checked;
+    if (del) return;
+
+    const nameInput = sec.querySelector('input[name^="sections"][name$="[nom]"]');
+    const orderInput= sec.querySelector('input[name^="sections"][name$="[ordre_affichage]"]');
+    const slugInput = sec.querySelector('input[name^="sections"][name$="[slug]"]');
+
+    const name = (nameInput?.value || '').trim().toLowerCase();
+    const order= orderInput?.value ?? '';
+    const slug = (slugInput?.value || '').trim();
+
+    if (!name) { errors.push('Une section sans nom.'); nameInput?.classList.add('field-error'); }
+    if (!slug) { errors.push('Une section sans slug.'); slugInput?.classList.add('field-error'); }
+
+    if (name) {
+      if (sectionNames.has(name)) {
+        errors.push(`Nom de section en double: "${nameInput.value}"`);
+        nameInput.classList.add('field-error');
+        sectionNames.get(name).classList.add('field-error');
+      } else sectionNames.set(name, nameInput);
+    }
+    if (order !== '') {
+      const key = String(order);
+      if (sectionOrders.has(key)) {
+        errors.push(`Ordre de section en double: ${order}`);
+        orderInput.classList.add('field-error');
+        sectionOrders.get(key).classList.add('field-error');
+      } else sectionOrders.set(key, orderInput);
+    }
+  });
+
+  // 2) Prestations: par section (noms & ordres uniques dans la section)
+  sectionBlocks.forEach(sec=>{
+    const delSec = sec.querySelector('input[name*="[delete]"]')?.checked;
+    if (delSec) return;
+
+    const prestaSummaries = Array.from(sec.querySelectorAll('.admin-prestation > summary'));
+    const names = new Map(); const orders = new Map();
+
+    prestaSummaries.forEach(sum=>{
+      const del = sum.querySelector('input[name*="[delete]"]')?.checked;
+      if (del) return;
+
+      const nameInput = sum.querySelector('input[name^="prestations"][name$="[nom]"]');
+      const orderInput= sum.querySelector('input[name^="prestations"][name$="[ordre_affichage]"]');
+      const name = (nameInput?.value || '').trim().toLowerCase();
+      const order= orderInput?.value ?? '';
+
+      if (!name) { errors.push('Une prestation sans nom.'); nameInput?.classList.add('field-error'); }
+
+      if (name) {
+        if (names.has(name)) {
+          errors.push(`Nom de prestation en double dans une même section: "${nameInput.value}"`);
+          nameInput.classList.add('field-error'); names.get(name).classList.add('field-error');
+        } else names.set(name, nameInput);
+      }
+      if (order !== '') {
+        const key = String(order);
+        if (orders.has(key)) {
+          errors.push(`Ordre de prestation en double dans une même section: ${order}`);
+          orderInput.classList.add('field-error'); orders.get(key).classList.add('field-error');
+        } else orders.set(key, orderInput);
+      }
+    });
+  });
+
+  // 3) Tarifs: par prestation (ordre unique + prix valide)
+  const prestaBodies = Array.from(document.querySelectorAll('.presta-body'));
+  prestaBodies.forEach(body=>{
+    const delPresta = body.parentElement.querySelector('input[name*="[delete]"]')?.checked;
+    if (delPresta) return;
+
+    const orderMap = new Map();
+
+    body.querySelectorAll('.admin-tarif').forEach(t=>{
+      const del = t.querySelector('input[name*="[delete]"]')?.checked;
+      if (del) return;
+
+      const price = t.querySelector('input[name^="tarifs"][name$="[prix]"]');
+      const order = t.querySelector('input[name^="tarifs"][name$="[ordre_affichage]"]');
+
+      if (price && (price.value === '' || Number(price.value) < 0)) {
+        errors.push('Prix de tarif invalide (vide ou négatif).');
+        price.classList.add('field-error');
+      }
+      if (order && order.value !== '') {
+        const key = String(order.value);
+        if (orderMap.has(key)) {
+          errors.push(`Ordre de tarif en double dans une même prestation: ${order.value}`);
+          order.classList.add('field-error'); orderMap.get(key).classList.add('field-error');
+        } else orderMap.set(key, order);
+      }
+    });
+  });
+
+  if (errors.length) {
+    e.preventDefault();
+    // simple bannière
+    let box = document.querySelector('.alert.error');
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'alert error';
+      document.querySelector('h1').after(box);
+    }
+    box.innerHTML = '<strong>Merci de corriger :</strong><ul>' + errors.map(t=>`<li>${t}</li>`).join('') + '</ul>';
+    box.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+});
+
+function nextOrder(inputs) {
+  // max + 1 parmi les ordres déjà saisis (ignore les éléments cochés "Supprimer")
+  let max = -1;
+  inputs.forEach(inp => {
+    const row = inp.closest('.admin-section,.admin-prestation,.admin-tarif');
+    const del = row?.querySelector('input[name*="[delete]"]')?.checked;
+    if (del) return;
+    const v = inp.value.trim();
+    if (v !== '' && !isNaN(v)) max = Math.max(max, Number(v));
+  });
+  return (max + 1);
+}
+
+// sur blur: si vide → propose un ordre auto
+document.addEventListener('blur', (e)=>{
+  if (!(e.target instanceof HTMLInputElement)) return;
+  if (!e.target.classList.contains('order-input')) return;
+  if (e.target.value.trim() !== '') return;
+
+  // scope: section, prestation, tarif
+  let scopeInputs = [];
+  const section = e.target.closest('.admin-section');
+  const prestation = e.target.closest('.admin-prestation');
+
+  if (e.target.name.startsWith('sections[')) {
+    scopeInputs = Array.from(section.parentElement.querySelectorAll('.admin-section .order-input[name^="sections["]'));
+  } else if (e.target.name.startsWith('prestations[')) {
+    scopeInputs = Array.from(section.querySelectorAll('.admin-prestation > summary .order-input[name^="prestations["]'));
+  } else if (e.target.name.startsWith('tarifs[')) {
+    scopeInputs = Array.from(prestation.querySelectorAll('.admin-tarif .order-input[name^="tarifs["]'));
+  }
+  e.target.value = nextOrder(scopeInputs);
+}, true);
+
+// sécurité au submit: remplit tous les ordres vides
+document.getElementById('builderForm').addEventListener('submit', function(e){
+  // Sections (global)
+  let inputs = Array.from(document.querySelectorAll('.admin-section > summary .order-input[name^="sections["]'));
+  const autoS = nextOrder(inputs);
+  inputs.forEach(inp => { if (inp.value.trim()==='') inp.value = autoS; });
+
+  // Prestations (par section)
+  document.querySelectorAll('.admin-section').forEach(sec=>{
+    const pres = Array.from(sec.querySelectorAll('.admin-prestation > summary .order-input[name^="prestations["]'));
+    const autoP = nextOrder(pres);
+    pres.forEach(inp => { if (inp.value.trim()==='') inp.value = autoP; });
+  });
+
+  // Tarifs (par prestation)
+  document.querySelectorAll('.admin-prestation').forEach(pre=>{
+    const tarifs = Array.from(pre.querySelectorAll('.admin-tarif .order-input[name^="tarifs["]'));
+    const autoT = nextOrder(tarifs);
+    tarifs.forEach(inp => { if (inp.value.trim()==='') inp.value = autoT; });
+  });
+});
+</script>
+{% endblock %}

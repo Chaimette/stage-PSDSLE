@@ -1,0 +1,79 @@
+{% set sections = menu_sections|default([]) %}
+{% set exclude = ['soins-visage','soins-corps','prestations'] %}
+
+<div class="announcement-bar">
+	OFFRE FLASH ETE! Des réductions pour vos soins de l'été !
+	<a href="/offres">Plus d'infos</a>
+</div>
+
+<header class="site-header">
+	<nav class="nav container">
+		<a class="brand" href="/">
+			<img src="/assets/images/logo-final-trans.png" alt="logo avec fond transparent" style="height: 3em;">
+			{{ title }}
+		</a>
+
+		<ul class="nav-list" id="main-nav">
+			<li class="nav-item can-overflow">
+				<a href="/">Accueil</a>
+			</li>
+
+			<li class="nav-item dropdown">
+				<button class="dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+					Soins
+					<span aria-hidden="true">▾</span>
+				</button>
+				<ul class="dropdown-menu">
+					<li>
+						<a href="/prestations?section=soins-visage">Soins visage</a>
+					</li>
+					<li>
+						<a href="/prestations?section=soins-corps">Soins corps</a>
+					</li>
+				</ul>
+			</li>
+
+			{% for s in sections %}
+				{% if s.slug is defined and s.slug not in exclude %}
+					<li class="nav-item can-overflow">
+						<a href="/prestations?section={{ s.slug }}">{{ s.nom }}</a>
+					</li>
+				{% endif %}
+			{% endfor %}
+
+			{# Liens “autres” #}
+			<li class="nav-item can-overflow">
+				<a href="/prestations">Toutes les prestations</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/atelier-girly">Atelier Girly</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/offres">Offres Spéciales</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/bon-cadeau">Offrir un bon cadeau</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/rdv">Prendre Rendez-Vous</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/contact">Contact</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/mentions-legales">Mentions Légales</a>
+			</li>
+			<li class="nav-item can-overflow">
+				<a href="/privacy">Politique de Confidentialité</a>
+			</li>
+
+			<li class="nav-item dropdown more" hidden>
+				<button class="dropdown-toggle" type="button" aria-haspopup="true" aria-expanded="false">
+					Autre
+					<span aria-hidden="true">▾</span>
+				</button>
+				<ul class="dropdown-menu" id="more-menu"></ul>
+			</li>
+		</ul>
+	</nav>
+</header>
