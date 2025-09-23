@@ -145,6 +145,11 @@ class AdminDashboardController extends AbstractController
                 }
 
                 $pdo->commit();
+
+                if (session_status() !== PHP_SESSION_ACTIVE) {
+                    session_start();
+                }
+                $_SESSION['flash_success'] = "Vos modifications ont bien été enregistrées!";
                 header('Location: /admin');
                 exit;
             } catch (\Throwable $e) {
@@ -154,6 +159,14 @@ class AdminDashboardController extends AbstractController
                 exit;
             }
         }
+        $flash = null;
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            session_start();
+        }
+        if (isset($_SESSION['flash_success'])) {
+            $flash = $_SESSION['flash_success'];
+            unset($_SESSION['flash_success']); // on l’affiche une seule fois
+        }
 
         // afficher le builder
         $tree = $this->model->getAdminTree();
@@ -161,6 +174,7 @@ class AdminDashboardController extends AbstractController
             'title' => 'Admin – Builder',
             'tree'  => $tree,
             'csrf'  => $this->csrfToken(),
+            'flash' => $flash,
         ]);
     }
 }
