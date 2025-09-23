@@ -1,0 +1,86 @@
+Enum "reservations_statut_enum" {
+  "pending"
+  "confirmed"
+  "cancelled"
+}
+
+Table "admins" {
+  "id" int [pk, not null, increment]
+  "email" varchar(160) [unique, not null]
+  "password_hash" varchar(255) [not null]
+  "created_at" timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table "creneaux" {
+  "id" int [pk, not null, increment]
+  "start_at" datetime [not null]
+  "end_at" datetime [not null]
+  "dispo" tinyint(1) [not null, default: 1]
+  "note" varchar(255)
+
+  Indexes {
+    (start_at, end_at) [unique, name: "uq_creneau"]
+  }
+}
+
+Table "prestations" {
+  "id" int [pk, not null, increment]
+  "section_id" int [not null]
+  "nom" varchar(150) [not null]
+  "description" text
+  "ordre_affichage" int [default: 0]
+  "actif" tinyint(1) [default: 1]
+  "date_creation" timestamp [default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (section_id, ordre_affichage) [unique, name: "uniq_presta_order_per_section"]
+  }
+}
+
+Table "reservations" {
+  "id" int [pk, not null, increment]
+  "creneau_id" int [unique, not null]
+  "prestation_id" int [not null]
+  "tarif_id" int
+  "nom" varchar(120) [not null]
+  "email" varchar(160) [not null]
+  "telephone" varchar(40)
+  "commentaire" text
+  "statut" reservations_statut_enum [not null, default: 'pending']
+  "created_at" timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table "sections" {
+  "id" int [pk, not null, increment]
+  "nom" varchar(100) [not null]
+  "slug" varchar(100) [unique, not null]
+  "description" text
+  "meta_description" varchar(160)
+  "image" varchar(255)
+  "ordre_affichage" int [default: 0]
+  "actif" tinyint(1) [default: 1]
+  "date_creation" timestamp [default: `CURRENT_TIMESTAMP`]
+}
+
+Table "tarifs" {
+  "id" int [pk, not null, increment]
+  "prestation_id" int [not null]
+  "duree" varchar(50)
+  "nb_seances" varchar(50)
+  "prix" decimal(6,2) [not null]
+  "ordre_affichage" int [default: 0]
+
+  Indexes {
+    (prestation_id, ordre_affichage) [unique, name: "uniq_tarif_order_per_presta"]
+  }
+}
+
+Ref "prestations_ibfk_1":"sections"."id" < "prestations"."section_id" [delete: cascade]
+
+Ref "fk_r_creneau":"creneaux"."id" < "reservations"."creneau_id" [delete: restrict]
+
+Ref "fk_r_presta":"prestations"."id" < "reservations"."prestation_id" [delete: restrict]
+
+Ref "fk_r_tarif":"tarifs"."id" < "reservations"."tarif_id" [delete: set null]
+
+Ref "tarifs_ibfk_1":"prestations"."id" < "tarifs"."prestation_id" [delete: cascade]

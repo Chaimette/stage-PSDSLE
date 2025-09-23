@@ -9,7 +9,6 @@ USE prestations_db;
 
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Table des sections (massages, soins, maquillage, etc.)
 CREATE TABLE sections (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nom VARCHAR(100) NOT NULL,
@@ -22,7 +21,6 @@ CREATE TABLE sections (
     date_creation TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table des prestations
 CREATE TABLE prestations (
     id INT PRIMARY KEY AUTO_INCREMENT,
     section_id INT NOT NULL,
@@ -34,12 +32,11 @@ CREATE TABLE prestations (
     FOREIGN KEY (section_id) REFERENCES sections(id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Table des tarifs
 CREATE TABLE tarifs (
     id INT PRIMARY KEY AUTO_INCREMENT,
     prestation_id INT NOT NULL,
-    duree VARCHAR(50),        -- "10 min", "1h", "1h30"
-    nb_seances VARCHAR(50),   -- "1 séance", "5 séances" (optionnel)
+    duree VARCHAR(50),       
+    nb_seances VARCHAR(50),   
     prix DECIMAL(6,2) NOT NULL,
     ordre_affichage INT DEFAULT 0,
     FOREIGN KEY (prestation_id) REFERENCES prestations(id) ON DELETE CASCADE
@@ -82,7 +79,6 @@ CREATE TABLE IF NOT EXISTS reservations (
 INSERT INTO admins (email, password_hash)
 VALUES ('admin@example.com', '$2y$12$LkdUeRiuzVGBbqcTrPVZuu.G7RxXLV7qXQGEJQrKyElAaK7zFfmrm')
 ON DUPLICATE KEY UPDATE email=email;
--- (hash = password_hash('Admin123!', PASSWORD_DEFAULT) : change-le ensuite)
 
 INSERT INTO sections (nom, slug, description, meta_description, ordre_affichage) VALUES
 ('Massages', 'massages', 
@@ -94,17 +90,15 @@ INSERT INTO sections (nom, slug, description, meta_description, ordre_affichage)
 ('Épilation', 'epilation', 'Épilation douce et efficace pour une peau lisse et soyeuse avec des techniques respectueuses de votre peau.', 'Épilation à la cire et au sucre. Techniques douces pour tous types de peau.', 5);
 
 INSERT INTO prestations (section_id, nom, description, ordre_affichage) VALUES
--- Massages (section_id = 1)
 (1, 'Massage Crânien', 'Combat la chute de cheveux et stimule la repousse. Soulage les tensions musculaires et maux de tête. Favorise la libération des toxines et réduit le stress.', 1),
 (1, 'Massage Pieds', 'Massage relaxant des pieds qui stimule la circulation sanguine, soulage les tensions et procure une détente profonde.', 2),
 (1, 'Prénatal ou Postnatal', 'Massage spécialement adapté aux femmes enceintes et jeunes mamans. Soulage les tensions du dos et améliore la circulation.', 3),
 (1, 'Massage Californien', 'Massage global du corps aux mouvements fluides et enveloppants. Favorise la détente profonde et libère les tensions.', 4),
 
--- Soins du Visage (section_id = 2)
 (2, 'Soin Hydratant', 'Soin en profondeur pour restaurer l\'hydratation naturelle de votre peau et lui redonner souplesse et éclat.', 1),
 (2, 'Soin Anti-âge', 'Traitement ciblé pour atténuer les signes de l\'âge et stimuler le renouvellement cellulaire.', 2),
 (2, 'Nettoyage de Peau', 'Purification en profondeur pour éliminer impuretés et points noirs, laissant la peau nette et fraîche.', 3),
--- Soins du Corps (section_id = 3)
+
 (3, 'Gommage Corps Complet', 'Exfoliation au sucre et huiles végétales pour une peau douce et lisse.', 1),
 (3, 'Enveloppement Minceur', 'Enveloppement chaud aux algues et caféine pour stimuler la microcirculation.', 2),
 (3, 'Soin Dos Purifiant', 'Nettoyage et soin ciblé pour le dos (gommage + extraction + masque).', 3),
@@ -123,21 +117,21 @@ INSERT INTO prestations (section_id, nom, description, ordre_affichage) VALUES
 (5, 'Maillot Intégral', 'Épilation maillot intégral.', 7);
 
 INSERT INTO tarifs (prestation_id, duree, prix, ordre_affichage) VALUES
--- Massage Crânien
+
 (1, '10 min', 10.00, 1),
 (1, '20 min', 20.00, 2),
 (1, '30 min', 35.00, 3),
--- Massage Pieds
+
 (2, '20 min', 20.00, 1),
 (2, '30 min', 30.00, 2),
 (2, '45 min', 45.00, 3),
--- Prénatal/Postnatal
+
 (3, '1h', 60.00, 1),
 (3, '1h30', 80.00, 2),
--- Massage Californien
+
 (4, '1h', 60.00, 1),
 (4, '1h30', 80.00, 2),
--- Soins du Visage
+
 (5, '45 min', 50.00, 1),
 (5, '1h', 65.00, 2),
 (6, '1h', 70.00, 1),
@@ -147,14 +141,11 @@ INSERT INTO tarifs (prestation_id, duree, prix, ordre_affichage) VALUES
 
 
 INSERT INTO tarifs (prestation_id, duree, prix, ordre_affichage) VALUES
--- Gommage Corps Complet (id auto) : suppose IDs 8/9/10 si suite de tes inserts
 (LAST_INSERT_ID(), '45 min', 45.00, 1);
 
--- Récupérer l'ID d'Enveloppement Minceur (ID = (SELECT id FROM prestations WHERE nom='Enveloppement Minceur' LIMIT 1))
 INSERT INTO tarifs (prestation_id, duree, prix, ordre_affichage)
 SELECT p.id, '1h', 60.00, 1 FROM prestations p WHERE p.nom='Enveloppement Minceur' LIMIT 1;
 
--- Soin Dos Purifiant
 INSERT INTO tarifs (prestation_id, duree, prix, ordre_affichage)
 SELECT p.id, '40 min', 42.00, 1 FROM prestations p WHERE p.nom='Soin Dos Purifiant' LIMIT 1;
 
