@@ -1,0 +1,20 @@
+.auth-wrap {
+    max-width: 460px;
+    margin: 3rem auto;
+}
+.auth-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border);
+}
+.auth-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+.auth-card button {
+    align-self: flex-end;
+}

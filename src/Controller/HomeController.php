@@ -18,7 +18,7 @@ class HomeController extends AbstractController
             'meta_description' => 'Contactez-nous pour plus d\'informations'
         ];
         
-        return $this->render('pages/contact.html.twig', $data);
+        return $this->render('prestations/contact.html.twig', $data);
     }
     
     public function rdv() {
