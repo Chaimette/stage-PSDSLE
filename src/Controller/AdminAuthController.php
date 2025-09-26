@@ -21,7 +21,7 @@ class AdminAuthController extends AbstractController
 
             if ($admin && password_verify($pass, $admin['password_hash'])) {
                 $_SESSION['admin_id'] = (int)$admin['id'];
-                header('Location: /admin'); // TODO: crée la page /admin
+                header('Location: /admin');
                 exit;
             }
             $_SESSION['flash_error'] = "Identifiants invalides.";

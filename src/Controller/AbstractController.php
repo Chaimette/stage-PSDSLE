@@ -13,21 +13,21 @@ abstract class AbstractController
     public function __construct()
     {
         require_once __DIR__ . '/../../config/env.php';
-    
-    if ($this->pdo === null) {
-        $dsn = sprintf(
-            'mysql:host=%s;dbname=%s;charset=%s',
-            $_ENV['DB_HOST'],
-            $_ENV['DB_NAME'], 
-            $_ENV['DB_CHARSET']
-        );
-        
-        $this->pdo = new \PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS'], [
-            \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-            \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-            \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
-        ]);
-    }
+
+        if ($this->pdo === null) {
+            $dsn = sprintf(
+                'mysql:host=%s;dbname=%s;charset=%s',
+                $_ENV['DB_HOST'],
+                $_ENV['DB_NAME'],
+                $_ENV['DB_CHARSET']
+            );
+
+            $this->pdo = new \PDO($dsn, $_ENV['DB_USER'], $_ENV['DB_PASS'], [
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci"
+            ]);
+        }
         // On init twig une seule fois
         if (self::$twig === null) {
             // Dossier des vues
@@ -77,15 +77,17 @@ abstract class AbstractController
             exit;
         }
     }
-    protected function csrfToken(): string {
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    return $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
-}
-protected function checkCsrf(string $token): void {
-    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-    if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $token)) {
-        http_response_code(400); exit('CSRF invalide');
+    protected function csrfToken(): string
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        return $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
     }
-}
-
+    protected function checkCsrf(string $token): void
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $token)) {
+            http_response_code(400);
+            exit('CSRF invalide');
+        }
+    }
 }

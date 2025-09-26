@@ -27,6 +27,6 @@ class HomeController extends AbstractController
             'meta_description' => 'Prenez rendez-vous en ligne'
         ];
         
-       return $this->render('pages/rdv.html.twig', $data);
+       return $this->render('prestations/rdv.html.twig', $data);
     }
 }
