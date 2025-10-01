@@ -10,11 +10,13 @@ $routes = require __DIR__ . '/../config/routes.php';
 
 // On normalise l'URI
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
-if ($uri === '' || $uri === false) { $uri = '/'; }
+if ($uri === '' || $uri === false) {
+    $uri = '/';
+}
 $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 // Appel du controleur + action
-$dispatch = function(string $controllerFqcn, string $action, array $args = []) {
+$dispatch = function (string $controllerFqcn, string $action, array $args = []) {
     if (!class_exists($controllerFqcn)) {
         http_response_code(500);
         echo "Contrôleur introuvable: {$controllerFqcn}";
@@ -43,7 +45,7 @@ foreach ($routes as $pattern => $info) {
     if (strpos($pattern, '{') === false) continue;
 
     // remplace {slug} par un named group
-    $regex = preg_replace_callback('/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/', function($m){
+    $regex = preg_replace_callback('/\{([a-zA-Z_][a-zA-Z0-9_]*)\}/', function ($m) {
         $name = $m[1];
         // slug/catch-all segment sans slash
         return '(?P<' . $name . '>[^/]+)';
