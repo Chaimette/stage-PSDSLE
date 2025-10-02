@@ -80,14 +80,19 @@ abstract class AbstractController
     protected function csrfToken(): string
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
-        return $_SESSION['csrf'] ??= bin2hex(random_bytes(16));
+        return $_SESSION['csrf'] ??= bin2hex(random_bytes(32));
     }
     protected function checkCsrf(string $token): void
     {
         if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+        if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            http_response_code(405);
+            exit;
+        }
         if (empty($_SESSION['csrf']) || !hash_equals($_SESSION['csrf'], $token)) {
             http_response_code(400);
             exit('CSRF invalide');
         }
+        $_SESSION['csrf'] = bin2hex(random_bytes(32));
     }
 }

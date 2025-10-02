@@ -3,10 +3,13 @@
 namespace App\Controller;
 
 use App\Model\PrestaModel;
+use App\Model\AdminPrestaModel;
+
 
 class AdminDashboardController extends AbstractController
 {
     private PrestaModel $model;
+    private AdminPrestaModel $adminModel;
 
     public function __construct()
     {
@@ -169,7 +172,7 @@ class AdminDashboardController extends AbstractController
         }
 
         // afficher le builder
-        $tree = $this->model->getAdminTree();
+        $tree = $this->adminModel->getAdminTree();
         return $this->render('admin/builder.html.twig', [
             'title' => 'Admin – Builder',
             'tree'  => $tree,

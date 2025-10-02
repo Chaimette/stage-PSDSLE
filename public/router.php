@@ -10,7 +10,7 @@ $file    = realpath($docroot . $uri);
 $insideDocroot = $file !== false && str_starts_with($file, $docroot . DIRECTORY_SEPARATOR);
 
 if ($uri !== '/' && $insideDocroot && is_file($file)) {
-    return false; //le serveur intégré renvoie directement le fichier (CSS/JS/IMG)
+    return false; //le serveur intégré renvoie directement le fichier
 }
 
 // i le fichier n'existe pas, on passe au front controller
