@@ -95,4 +95,44 @@ abstract class AbstractController
         }
         $_SESSION['csrf'] = bin2hex(random_bytes(32));
     }
+
+    ///HELPERS
+    protected function sanitizeSlug(?string $s): string
+    {
+        $s = strtolower(trim((string)$s));
+        $s = preg_replace('~[^a-z0-9-]+~', '-', $s);
+        $s = trim($s, '-');
+        return mb_substr($s, 0, 150);
+    }
+    
+    protected function posInt($v): int
+    {
+        $n = (int)($v ?? 0);
+        return $n < 0 ? 0 : $n;
+    }
+    protected function price($v): float
+    {
+        $s = is_string($v) ? str_replace(',', '.', $v) : $v;
+        $f = (float)($s ?? 0);
+        return $f < 0 ? 0.0 : $f;
+    }
+    protected function clip(?string $s, int $max): string
+    {
+        $s = trim((string)$s);
+        return mb_strlen($s) > $max ? mb_substr($s, 0, $max) : $s;
+    }
+    protected function ensureUniqueSlug(string $slug, int $excludeId = 0): string {
+    $base = $slug !== '' ? $slug : 'item';
+    $try  = $base; $i = 2;
+
+    while (true) {
+        $sql  = 'SELECT COUNT(*) FROM sections WHERE slug = ?' . ($excludeId ? ' AND id <> ?' : '');
+        $stmt = $this->pdo->prepare($sql);
+        $excludeId ? $stmt->execute([$try, $excludeId]) : $stmt->execute([$try]);
+        $exists = (int)$stmt->fetchColumn() > 0;
+        if (!$exists) return $try;
+        $try = $base . '-' . $i++;
+    }
+}
+
 }
