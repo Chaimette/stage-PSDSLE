@@ -27,6 +27,10 @@ return [
     ],
     // Admin
     '/admin'                    => ['controller' => 'AdminDashboardController', 'action' => 'index'],
-   
+    '/logout' => ['controller' => 'AdminAuthController', 'action' => 'logout'],
+    '/admin/login' => [
+        'controller' => 'AdminAuthController',
+        'action'     => 'login',
+    ],
 
 ];

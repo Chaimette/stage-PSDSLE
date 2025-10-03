@@ -28,7 +28,7 @@
 
 		<div class="builder-toolbar">
 			<button type="button" class="btn" onclick="addSection()">+ Ajouter une section</button>
-			<button type="submit" class="btn btn-primary">💾 Sauvegarder</button>
+			<button type="submit" class="btn btn-primary" style="background-color: green; border-style:none>💾 Sauvegarder</button>
 			<button type="button" class="btn btn-cancel">
 				<a href="/admin" target="_self">❌ Annuler</a>
 			</button>
@@ -118,10 +118,19 @@
 						</div>
 					</div>
 				</details>
-			{% else %}
-				<p>Aucune section.</p>
-			{% endfor %}
-		</div>
+
+
+			</div>
+
+		{% else %}
+			<p>Aucune section.</p>
+		{% endfor %}
+	</div>
+	<div class="builder-toolbar">
+		<button type="submit" class="btn btn-primary" style="background-color: green; border-style:none">💾 Sauvegarder</button>
+		<button type="button" class="btn btn-cancel">
+			<a href="/admin" target="_self">❌ Annuler</a>
+		</button>
 	</form>
 
 {% endblock %}

@@ -18,10 +18,11 @@ class AdminPrestaController extends AbstractController
         $this->adminPrestationModel = new AdminPrestaModel($this->pdo);
         $this->prestationModel = new PrestaModel($this->pdo);
     }
-
+//TODO : SORT THROUGH CRUD FUNCTIONS AND CLEAN UP
     // Liste
     public function adminSectionsList(): string
     {
+
         $this->requireAdmin();
 
         $sections = $this->prestationModel->listSections();
