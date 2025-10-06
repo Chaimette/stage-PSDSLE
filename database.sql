@@ -84,7 +84,7 @@ INSERT INTO sections (nom, slug, description, meta_description, ordre_affichage)
 ('Massages', 'massages', 
 'Offrez à votre corps un moment de détente absolue grâce à des massages adaptés à vos besoins : relaxants, tonifiants ou énergétiques, pour libérer les tensions et retrouver harmonie et vitalité.', 'Découvrez nos massages bien-être et thérapeutiques : massage crânien, massage des pieds, prénatal et postnatal.', 1),
 ('Soins du Visage', 'soins-visage', 'Des soins personnalisés pour révéler la beauté naturelle de votre peau avec des techniques douces et des produits de qualité.', 'Soins du visage sur mesure : nettoyage, hydratation, anti-âge. Redonnez éclat et jeunesse à votre peau.', 2),
-('Soins du Corps', 'soins-corps', 'Des soins personnalisés pour révéler la beauté naturelle de votre peau avec des techniques douces et des produits de qualité.', 'Soins du visage sur mesure : nettoyage, hydratation, anti-âge. Redonnez éclat et jeunesse à votre peau.', 3 
+('Soins du Corps', 'soins-du-corps', 'Des soins personnalisés pour révéler la beauté naturelle de votre peau avec des techniques douces et des produits de qualité.', 'Soins du visage sur mesure : nettoyage, hydratation, anti-âge. Redonnez éclat et jeunesse à votre peau.', 3 
 ),
 ('Maquillage', 'maquillage', 'Sublimez votre beauté avec nos prestations maquillage pour tous vos événements spéciaux.', 'Services de maquillage professionnel : mariée, soirée, photo. Révélez votre beauté naturelle.', 4),
 ('Épilation', 'epilation', 'Épilation douce et efficace pour une peau lisse et soyeuse avec des techniques respectueuses de votre peau.', 'Épilation à la cire et au sucre. Techniques douces pour tous types de peau.', 5);

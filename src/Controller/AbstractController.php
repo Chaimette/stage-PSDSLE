@@ -69,13 +69,14 @@ abstract class AbstractController
 
     protected function requireAdmin(): void
     {
-        if (session_status() !== PHP_SESSION_ACTIVE) {
-            session_start();
-        }
-        if (empty($_SESSION['admin_id'])) {
-            header('Location: /admin/login');
-            exit;
-        }
+        $this->startSession();
+    if (empty($_SESSION['admin_id'])) {
+        header('Location: /admin/login'); exit;
+    }
+    if (!$this->touchSession(3600, 86400)) {
+        $_SESSION = [];
+        header('Location: /admin/login'); exit;
+    }
     }
     protected function csrfToken(): string
     {
@@ -97,6 +98,30 @@ abstract class AbstractController
     }
 
     ///HELPERS
+    protected function startSession(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) return;
+        session_set_cookie_params([
+            'httponly' => true,
+            'secure'   => !empty($_SERVER['HTTPS']),
+            'samesite' => 'Lax',
+            'lifetime' => 0,
+        ]);
+        session_start();
+    }
+    protected function touchSession(int $idleMax = 3600, int $absoluteMax = 86400): bool
+    {
+        $this->startSession();
+        $now = time();
+        $_SESSION['_created'] = $_SESSION['_created'] ?? $now;
+        $_SESSION['_last']    = $_SESSION['_last']    ?? $now;
+
+        if ($now - $_SESSION['_created'] > $absoluteMax) return false; // timeout absolu
+        if ($now - $_SESSION['_last']    > $idleMax)    return false; // inactivité
+
+        $_SESSION['_last'] = $now; // onr aafraîchit le timestamp d'activité
+        return true;
+    }
     protected function sanitizeSlug(?string $s): string
     {
         $s = strtolower(trim((string)$s));
@@ -104,7 +129,7 @@ abstract class AbstractController
         $s = trim($s, '-');
         return mb_substr($s, 0, 150);
     }
-    
+
     protected function posInt($v): int
     {
         $n = (int)($v ?? 0);
@@ -121,18 +146,19 @@ abstract class AbstractController
         $s = trim((string)$s);
         return mb_strlen($s) > $max ? mb_substr($s, 0, $max) : $s;
     }
-    protected function ensureUniqueSlug(string $slug, int $excludeId = 0): string {
-    $base = $slug !== '' ? $slug : 'item';
-    $try  = $base; $i = 2;
+    protected function ensureUniqueSlug(string $slug, int $excludeId = 0): string
+    {
+        $base = $slug !== '' ? $slug : 'item';
+        $try  = $base;
+        $i = 2;
 
-    while (true) {
-        $sql  = 'SELECT COUNT(*) FROM sections WHERE slug = ?' . ($excludeId ? ' AND id <> ?' : '');
-        $stmt = $this->pdo->prepare($sql);
-        $excludeId ? $stmt->execute([$try, $excludeId]) : $stmt->execute([$try]);
-        $exists = (int)$stmt->fetchColumn() > 0;
-        if (!$exists) return $try;
-        $try = $base . '-' . $i++;
+        while (true) {
+            $sql  = 'SELECT COUNT(*) FROM sections WHERE slug = ?' . ($excludeId ? ' AND id <> ?' : '');
+            $stmt = $this->pdo->prepare($sql);
+            $excludeId ? $stmt->execute([$try, $excludeId]) : $stmt->execute([$try]);
+            $exists = (int)$stmt->fetchColumn() > 0;
+            if (!$exists) return $try;
+            $try = $base . '-' . $i++;
+        }
     }
-}
-
 }

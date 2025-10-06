@@ -6,7 +6,14 @@
 {% endblock %}
 
 {% block content %}
-	<h1>Administration – Builder</h1>
+<div class="title-admin"><h1>Administration – Builder</h1>
+<form method="post" action="/logout" style="display:inline">
+  <input type="hidden" name="csrf" value="{{ csrf }}">
+  <button type="submit" class="btn btn-cancel">Se déconnecter</button>
+</form>
+
+</div>
+	
 
 	{% if errors is defined and errors %}
 		<div class="alert error">
@@ -28,7 +35,7 @@
 
 		<div class="builder-toolbar">
 			<button type="button" class="btn" onclick="addSection()">+ Ajouter une section</button>
-			<button type="submit" class="btn btn-primary" style="background-color: green; border-style:none>💾 Sauvegarder</button>
+			<button type="submit" class="btn btn-primary" style="background-color: green; border-style:none">💾 Sauvegarder</button>
 			<button type="button" class="btn btn-cancel">
 				<a href="/admin" target="_self">❌ Annuler</a>
 			</button>
