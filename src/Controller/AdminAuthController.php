@@ -9,18 +9,34 @@ class AdminAuthController extends AbstractController
         if (session_status() !== PHP_SESSION_ACTIVE) {
             session_start();
         }
-
+        if (!empty($_SESSION['admin_id'])) {
+            if ($this->touchSession(3600, 86400)) {
+                header('Location: /admin');
+                exit;
+            }
+        }
         if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
+            $this->checkCsrf($_POST['csrf'] ?? '');
             $email = trim($_POST['email'] ?? '');
             $pass  = $_POST['password'] ?? '';
-            $pdo   = $this->pdo();
 
-            $stmt = $pdo->prepare("SELECT id, password_hash FROM admins WHERE email=? LIMIT 1");
+            if (empty($email) || empty($pass)) {
+                $_SESSION['flash_error'] = "Veuillez fournir vos identifiants.";
+                header('Location: /admin/login');
+                exit;
+            }
+
+            $stmt = $this->pdo->prepare("SELECT id, password_hash FROM admins WHERE email=? LIMIT 1");
             $stmt->execute([$email]);
             $admin = $stmt->fetch(\PDO::FETCH_ASSOC);
 
             if ($admin && password_verify($pass, $admin['password_hash'])) {
+                if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+                session_regenerate_id(true); // anti fixation - on change l'ID de session après login
                 $_SESSION['admin_id'] = (int)$admin['id'];
+                $_SESSION['_created'] = time();
+                $_SESSION['_last']    = time();
+
                 header('Location: /admin');
                 exit;
             }
@@ -33,7 +49,8 @@ class AdminAuthController extends AbstractController
         unset($_SESSION['flash_error']);
         return $this->render('admin/login.html.twig', [
             'title' => 'Connexion Admin',
-            'error' => $error
+            'error' => $error,
+            'csrf' => $this->csrfToken(),
         ]);
     }
 

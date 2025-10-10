@@ -54,7 +54,7 @@ test.describe('Auth admin', () => {
 
 });
 // POUR LANCER LES TESTS:
-// playwright test --ui
+// npx playwright test --ui
 // OU
 // npx playwright test
 // OU avec un navigateur précis:

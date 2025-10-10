@@ -21,13 +21,16 @@ return [
         'controller' => 'PrestaController',
         'action'     => 'show',
     ],
-    '/admin/login' => [
-        'controller' => 'AdminAuthController',
-        'action'     => 'login',
-    ],
+
     // Admin
-    '/admin'                    => ['controller' => 'AdminDashboardController', 'action' => 'index'],
-    '/logout' => ['controller' => 'AdminAuthController', 'action' => 'logout'],
+    '/admin' => [
+        'controller' => 'AdminDashboardController', 
+        'action' => 'index'
+    ],
+    '/logout' => [
+        'controller' => 'AdminAuthController', 
+        'action' => 'logout'
+    ],
     '/admin/login' => [
         'controller' => 'AdminAuthController',
         'action'     => 'login',
