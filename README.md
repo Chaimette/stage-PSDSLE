@@ -4,41 +4,41 @@
 Refonte du Google Site en application MVC PHP/JS pour démonstration (démo interne/portfolio). Mise en prod optionnelle.
 
 ## Pile technique
-- PHP 8.x, Composer
-- Router minimal (front controller)
-- Vues en PHP/HTML, CSS natif (+ utilitaires), JS Vanilla
-- MySQL/MariaDB (PDO)
-- PHPMailer pour emails
+- PHP 8.4, Composer
+- Router.php
+- Vues en PHP/HTML5/Twig, CSS3 natif (+ utilitaires), JS Vanilla
+- MySQL (PDO)
+- PHPMailer pour emails (pas encore mis en place)
 - Dotenv pour config
 
-## Démarrer
+## Démarrer A REFAIRE
 1. `cp .env.example .env` et renseigner DB_USER/DB_PASS/MAIL_*
 2. `composer install` (si nécessaire)
-3. Créer la base : `mysql -u root -p < database/schema.sql`
-4. Lancer en local : `php -S localhost:8000 -t public`
+3. Créer la base : `mysql -u root -p < database.sql`
+4. Lancer en local : `php -S localhost:8000 -t public public/router.php`
 
 ## Structure
 ```
-/app
-  /Controllers
-  /Models
-  /Views
 /config
-/database
 /public
+  /assets
+    /images
+    /css
+    /js
   index.php
-/resources
-  /images
-  /css
-  /js
+  router.php
+/src
+  /Controller
+  /Model
+  /View
 /tests
-/docs
+database.sql
 ```
 
 ## Sécurité de base
 - CSRF tokens sur formulaires
-- Validation/échappement systématique
-- Headers sécurité (CSP, X-Frame-Options, etc.)
+- Validation/échappement systématique 
+- Headers sécurité
 
 ## Licences & crédits
 Images et contenus fournis par Sabrina Maraldo, usage interne/stage.

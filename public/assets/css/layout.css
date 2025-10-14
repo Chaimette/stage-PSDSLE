@@ -286,6 +286,14 @@ main > :last-child {
 
 }
 
+.newsletter-section h2 {
+    font-family: var(--ff-serif);
+    color: var(--gold);
+    font-weight: 500;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    text-align: center;
+
+}
 @media (max-width: 900px) {
     .content-grid {
         grid-template-columns: 1fr;
