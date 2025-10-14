@@ -2,18 +2,17 @@
 
 namespace App\Model;
 
-use PDO;
 use App\Model\AbstractModel;
+use PDO;
 
 class AdminPrestaModel extends AbstractModel
 {
-
-    /// FONCTIONS ADMINS ///
+    // / FONCTIONS ADMINS ///
 
     public function createSection($data)
     {
-        $query = "INSERT INTO sections (nom, slug, description, meta_description, ordre_affichage) 
-                  VALUES (:nom, :slug, :description, :meta_description, :ordre_affichage)";
+        $query = 'INSERT INTO sections (nom, slug, description, meta_description, ordre_affichage) 
+                  VALUES (:nom, :slug, :description, :meta_description, :ordre_affichage)';
         $stmt = $this->pdo->prepare($query);
         return $stmt->execute([
             ':nom' => $data['nom'],
@@ -26,8 +25,8 @@ class AdminPrestaModel extends AbstractModel
 
     public function createPrestation($data)
     {
-        $query = "INSERT INTO prestations (section_id, nom, description, ordre_affichage) 
-                  VALUES (:section_id, :nom, :description, :ordre_affichage)";
+        $query = 'INSERT INTO prestations (section_id, nom, description, ordre_affichage) 
+                  VALUES (:section_id, :nom, :description, :ordre_affichage)';
         $stmt = $this->pdo->prepare($query);
         return $stmt->execute([
             ':section_id' => $data['section_id'],
@@ -37,10 +36,10 @@ class AdminPrestaModel extends AbstractModel
         ]);
     }
 
-    public function createTarif($data)
+    public function createTarif(array $data): bool
     {
-        $query = "INSERT INTO tarifs (prestation_id, duree, nb_seances, prix, ordre_affichage) 
-                  VALUES (:prestation_id, :duree, :nb_seances, :prix, :ordre_affichage)";
+        $query = 'INSERT INTO tarifs (prestation_id, duree, nb_seances, prix, ordre_affichage) 
+                  VALUES (:prestation_id, :duree, :nb_seances, :prix, :ordre_affichage)';
         $stmt = $this->pdo->prepare($query);
         return $stmt->execute([
             ':prestation_id' => $data['prestation_id'],
@@ -51,16 +50,16 @@ class AdminPrestaModel extends AbstractModel
         ]);
     }
 
-
     public function findSection(int $id): ?array
     {
-        $st = $this->pdo->prepare("SELECT * FROM sections WHERE id=?");
+        $st = $this->pdo->prepare('SELECT * FROM sections WHERE id=?');
         $st->execute([$id]);
         return $st->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+
     public function updateSection(int $id, array $data): bool
     {
-        $sql = "UPDATE sections SET nom=:nom, slug=:slug, description=:description, meta_description=:meta, ordre_affichage=:ord, actif=:actif WHERE id=:id";
+        $sql = 'UPDATE sections SET nom=:nom, slug=:slug, description=:description, meta_description=:meta, ordre_affichage=:ord, actif=:actif WHERE id=:id';
         $st = $this->pdo->prepare($sql);
         return $st->execute([
             ':nom' => $data['nom'],
@@ -72,31 +71,34 @@ class AdminPrestaModel extends AbstractModel
             ':id' => $id
         ]);
     }
+
     public function deleteSection(int $id): bool
     {
-        $st = $this->pdo->prepare("DELETE FROM sections WHERE id=?");
+        $st = $this->pdo->prepare('DELETE FROM sections WHERE id=?');
         return $st->execute([$id]);
     }
 
-    /// PRESTATIONS ///
+    // / PRESTATIONS ///
     public function listPrestations(?int $sectionId = null): array
     {
         if ($sectionId) {
-            $st = $this->pdo->prepare("SELECT * FROM prestations WHERE section_id=? ORDER BY ordre_affichage, nom");
+            $st = $this->pdo->prepare('SELECT * FROM prestations WHERE section_id=? ORDER BY ordre_affichage, nom');
             $st->execute([$sectionId]);
             return $st->fetchAll(PDO::FETCH_ASSOC);
         }
-        return $this->pdo->query("SELECT * FROM prestations ORDER BY section_id, ordre_affichage, nom")->fetchAll(PDO::FETCH_ASSOC);
+        return $this->pdo->query('SELECT * FROM prestations ORDER BY section_id, ordre_affichage, nom')->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function findPrestation(int $id): ?array
     {
-        $st = $this->pdo->prepare("SELECT * FROM prestations WHERE id=?");
+        $st = $this->pdo->prepare('SELECT * FROM prestations WHERE id=?');
         $st->execute([$id]);
         return $st->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+
     public function updatePrestation(int $id, array $data): bool
     {
-        $sql = "UPDATE prestations SET section_id=:section_id, nom=:nom, description=:description, ordre_affichage=:ord, actif=:actif WHERE id=:id";
+        $sql = 'UPDATE prestations SET section_id=:section_id, nom=:nom, description=:description, ordre_affichage=:ord, actif=:actif WHERE id=:id';
         $st = $this->pdo->prepare($sql);
         return $st->execute([
             ':section_id' => $data['section_id'],
@@ -107,28 +109,31 @@ class AdminPrestaModel extends AbstractModel
             ':id' => $id
         ]);
     }
+
     public function deletePrestation(int $id): bool
     {
-        $st = $this->pdo->prepare("DELETE FROM prestations WHERE id=?");
+        $st = $this->pdo->prepare('DELETE FROM prestations WHERE id=?');
         return $st->execute([$id]);
     }
 
-    /// TARIFS ///
+    // / TARIFS ///
     public function listTarifs(int $prestationId): array
     {
-        $st = $this->pdo->prepare("SELECT * FROM tarifs WHERE prestation_id=? ORDER BY ordre_affichage, id");
+        $st = $this->pdo->prepare('SELECT * FROM tarifs WHERE prestation_id=? ORDER BY ordre_affichage, id');
         $st->execute([$prestationId]);
         return $st->fetchAll(PDO::FETCH_ASSOC);
     }
+
     public function findTarif(int $id): ?array
     {
-        $st = $this->pdo->prepare("SELECT * FROM tarifs WHERE id=?");
+        $st = $this->pdo->prepare('SELECT * FROM tarifs WHERE id=?');
         $st->execute([$id]);
         return $st->fetch(PDO::FETCH_ASSOC) ?: null;
     }
+
     public function updateTarif(int $id, array $data): bool
     {
-        $sql = "UPDATE tarifs SET duree=:duree, nb_seances=:nb, prix=:prix, ordre_affichage=:ord WHERE id=:id";
+        $sql = 'UPDATE tarifs SET duree=:duree, nb_seances=:nb, prix=:prix, ordre_affichage=:ord WHERE id=:id';
         $st = $this->pdo->prepare($sql);
         return $st->execute([
             ':duree' => $data['duree'],
@@ -138,15 +143,16 @@ class AdminPrestaModel extends AbstractModel
             ':id' => $id
         ]);
     }
+
     public function deleteTarif(int $id): bool
     {
-        $st = $this->pdo->prepare("DELETE FROM tarifs WHERE id=?");
+        $st = $this->pdo->prepare('DELETE FROM tarifs WHERE id=?');
         return $st->execute([$id]);
     }
 
     public function getAdminTree(): array
     {
-        $sql = "
+        $sql = '
       SELECT
         s.id   AS section_id,
         s.nom  AS section_nom,
@@ -177,62 +183,63 @@ class AdminPrestaModel extends AbstractModel
         s.ordre_affichage, s.id,
         p.ordre_affichage, p.id,
         COALESCE(t.ordre_affichage, 999), t.id
-    ";
+    ';
 
         $rows = $this->pdo->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
 
-        $tree   = [];
+        $tree = [];
         $sIndex = [];
 
         foreach ($rows as $r) {
-            $sid = (int)$r['section_id'];
+            $sid = (int) $r['section_id'];
             if (!isset($sIndex[$sid])) {
                 $sIndex[$sid] = count($tree);
                 $tree[] = [
-                    'id'               => $sid,
-                    'nom'              => $r['section_nom'],
-                    'slug'             => $r['section_slug'],
-                    'description'      => $r['section_description'],
+                    'id' => $sid,
+                    'nom' => $r['section_nom'],
+                    'slug' => $r['section_slug'],
+                    'description' => $r['section_description'],
                     'meta_description' => $r['section_meta'],
-                    'ordre_affichage'  => (int)$r['section_ordre'],
-                    'actif'            => (int)$r['section_actif'],
-                    'prestations'      => [],
-                    '_pIndex'          => [],
+                    'ordre_affichage' => (int) $r['section_ordre'],
+                    'actif' => (int) $r['section_actif'],
+                    'prestations' => [],
+                    '_pIndex' => [],
                 ];
             }
             $si = $sIndex[$sid];
 
             if (!empty($r['prestation_id'])) {
-                $pid = (int)$r['prestation_id'];
+                $pid = (int) $r['prestation_id'];
                 if (!isset($tree[$si]['_pIndex'][$pid])) {
                     $tree[$si]['_pIndex'][$pid] = count($tree[$si]['prestations']);
                     $tree[$si]['prestations'][] = [
-                        'id'               => $pid,
-                        'section_id'       => (int)$r['prestation_section_id'],
-                        'nom'              => $r['prestation_nom'],
-                        'description'      => $r['prestation_description'],
-                        'ordre_affichage'  => (int)$r['prestation_ordre'],
-                        'actif'            => (int)$r['prestation_actif'],
-                        'tarifs'           => [],
+                        'id' => $pid,
+                        'section_id' => (int) $r['prestation_section_id'],
+                        'nom' => $r['prestation_nom'],
+                        'description' => $r['prestation_description'],
+                        'ordre_affichage' => (int) $r['prestation_ordre'],
+                        'actif' => (int) $r['prestation_actif'],
+                        'tarifs' => [],
                     ];
                 }
                 $pi = $tree[$si]['_pIndex'][$pid];
 
                 if (!empty($r['tarif_id'])) {
                     $tree[$si]['prestations'][$pi]['tarifs'][] = [
-                        'id'               => (int)$r['tarif_id'],
-                        'prestation_id'    => (int)$r['tarif_prestation_id'],
-                        'duree'            => $r['duree'],
-                        'nb_seances'       => $r['nb_seances'],
-                        'prix'             => $r['prix'],
-                        'ordre_affichage'  => (int)$r['tarif_ordre'],
+                        'id' => (int) $r['tarif_id'],
+                        'prestation_id' => (int) $r['tarif_prestation_id'],
+                        'duree' => $r['duree'],
+                        'nb_seances' => $r['nb_seances'],
+                        'prix' => $r['prix'],
+                        'ordre_affichage' => (int) $r['tarif_ordre'],
                     ];
                 }
             }
         }
 
         // nettoyage index interne
-        foreach ($tree as &$sec) unset($sec['_pIndex']);
+        foreach ($tree as &$sec)
+            unset($sec['_pIndex']);
 
         return $tree;
     }

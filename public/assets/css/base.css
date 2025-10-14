@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap");
 
 :root {
-    --bg: #ffffff;
-    --bg-cream: #f5f3f0;
-    --taupe: #9d8b7a;
-    --taupe-600: #8a796a;
+    --bg: #FFF2DE;
+    --bg-cream: #FFE7BC;
+    --taupe: #564A32;
+    --taupe-600: #564A32;
     --text-900: #2b2b2b;
     --text-700: #555;
     --text-500: #8a8a8a;
@@ -12,7 +12,7 @@
 
     --accent: #c41e3a;
     --accent-600: #aa1931;
-    --gold: #d4af37;
+    --gold: #EFC373;
 
     --ff-serif: "Playfair Display", serif;
     --ff-sans: "Montserrat", sans-serif;

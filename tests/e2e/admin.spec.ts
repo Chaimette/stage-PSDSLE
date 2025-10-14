@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD!;
 
-// petite regex qui tolère /admin  OU /admin/ OU /admin/login?redirect=...
+// regex qui tolère /admin  OU /admin/ OU /admin/login?redirect=...
 const isLoginUrl = (url: string) => /\/admin(\/login)?\/?(\?.*)?$/.test(url);
 
 test.describe('Auth admin', () => {
@@ -15,7 +15,7 @@ test.describe('Auth admin', () => {
     // On accepte /admin ou /admin/login tant qu’on VOIT le formulaire de login.
     expect(isLoginUrl(page.url())).toBeTruthy();
 
-    // Vérifie qu’on voit un titre OU au moins le bouton et les inputs:
+    // on vérifie qu’on voit un titre OU au moins le bouton et les inputs:
     await expect(page.getByRole('button', { name: /Se connecter/i })).toBeVisible();
     await expect(page.locator('input[name="email"]')).toBeVisible();
     await expect(page.locator('input[name="password"]')).toBeVisible();
@@ -28,11 +28,11 @@ test.describe('Auth admin', () => {
     await page.fill('input[name="password"]', 'MauvaisMotDePasse!');
     await page.getByRole('button', { name: /Se connecter/i }).click();
 
-    // Reste sur login (ou revient dessus) :
+    // on reste sur login (ou revient dessus) :
     await page.waitForLoadState('networkidle');
     expect(isLoginUrl(page.url())).toBeTruthy();
 
-    // Message d’erreur tolérant (ta classe .error existe déjà) :
+    // Message d’erreur tolérant (la classe .error existe déjà) :
     const err = page.locator('p.error');
     await expect(err).toBeVisible();
     await expect(err).toContainText(/invalide|incorrect|erreur|échoué/i);
@@ -54,7 +54,7 @@ test.describe('Auth admin', () => {
 
 });
 // POUR LANCER LES TESTS:
-// playwright test --ui
+// npx playwright test --ui
 // OU
 // npx playwright test
 // OU avec un navigateur précis:
