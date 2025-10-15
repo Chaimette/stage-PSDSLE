@@ -36,7 +36,7 @@ function nextOrder(inputs) {
     return max + 1;
 }
 
-// Désactiver tout un bloc si [delete] coché (évite validations & focus)
+// Désactiver tout un bloc si delete coché (évite validations & focus)
 function setDisabledWithin(container, disabled) {
     $$("input,select,textarea,button", container).forEach((el) => {
         if (el.type === "checkbox" && /\[delete\]/.test(el.name)) return;
@@ -113,14 +113,14 @@ function addSection() {
       <label class="stack mini"><span>Ordre</span><input class="inline-input sm order-input" type="number" name="sections[${id}][ordre_affichage]" min="1" ></label>
       <label class="check"><input type="checkbox" name="sections[${id}][actif]" checked> Actif</label>
       <label class="danger"><input type="checkbox" name="sections[${id}][delete]"> Supprimer</label>
-      <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+      <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)"> Annuler</button>
     </summary>
     <div class="section-body">
       <label class="stack"><span>Description</span><textarea name="sections[${id}][description]" rows="2"></textarea></label>
       <label class="stack"><span>Méta description</span><input name="sections[${id}][meta_description]"></label>
       <div class="section-actions">
         <button type="button" class="btn btn-soft" onclick="addPrestation('${id}')">+ Ajouter une prestation</button>
-        <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+        <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)"> Annuler</button>
       </div>
       <div class="prestations" id="prestations-${id}"></div>
     </div>
@@ -140,7 +140,7 @@ function addPrestation(sectionId) {
       <label class="stack mini"><span>Ordre</span><input class="inline-input sm order-input" type="number" name="prestations[${id}][ordre_affichage]" value="0" min="0" required></label>
       <label class="check"><input type="checkbox" name="prestations[${id}][actif]" checked> Actif</label>
       <label class="danger"><input type="checkbox" name="prestations[${id}][delete]"> Supprimer</label>
-      <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+      <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)"> Annuler</button>
     </summary>
     <div class="presta-body">
       <label class="stack"><span>Description</span><textarea name="prestations[${id}][description]" rows="2"></textarea></label>
@@ -164,7 +164,7 @@ function addTarif(prestationId) {
     <input class="inline-input sm" type="number" step="0.01" name="tarifs[${id}][prix]" value="0" placeholder="Prix">
     <label class="stack mini"><span>Ordre</span><input class="inline-input sm order-input" type="number" name="tarifs[${id}][ordre_affichage]" value="0" min="0" required></label>
     <label class="danger"><input type="checkbox" name="tarifs[${id}][delete]"> Supprimer</label>
-    <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)">❌ Annuler</button>
+    <button type="button" class="btn btn-cancel" onclick="cancelBlock(this)"> Annuler</button>
   </div>`;
     wrap.insertAdjacentHTML("beforeend", tpl);
 }

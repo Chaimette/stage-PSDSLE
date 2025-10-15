@@ -1,75 +1,79 @@
 {% extends 'layout/base.html.twig' %}
 
-{% block title %}Toutes les prestations - {{ title|default("Prendre Soin de Soi L'Essentiel") }}{% endblock %}
-{% block meta_description %}Découvrez toutes nos prestations, classées par catégorie, avec l'ensemble des tarifs.{% endblock %}
+{% block title %}Toutes les prestations -
+	{{ title|default("Prendre Soin de Soi L'Essentiel") }}
+{% endblock %}
+{% block meta_description %}Toutes nos prestations beautés, soins et rituels, classés par catégorie, avec l'ensemble des tarifs.
+{% endblock %}
 
 {% block content %}
-<section class="hero-section">
-  <div class="hero-content">
-    <h1>Toutes les prestations</h1>
+	<section class="hero-section">
+		<div class="hero-content">
+			<h1>Toutes les prestations</h1>
+		</div>
+	</section>
+	{% for section in sections %}
+		<section class="service-intro" id="{{ section.slug }}">
+			<div class="container">
+				<h2>
+					<a href="/prestations/{{ section.slug }}">{{ section.nom }}</a>
+				</h2>
+				{% if section.description %}
+					<p>{{ section.description|nl2br }}</p>
+				{% endif %}
+			</div>
+		</section>
 
-  </div>
-</section>
+		<section class="service-accordion">
+			<div class="container">
+				{% for prestation in section.prestations %}
+					<div class="accordion-item" id="presta-{{ prestation.id }}">
+						<div class="accordion-header">
+							<h3>{{ prestation.nom }}</h3>
+						</div>
 
+						<div class="accordion-content" style="display:block">
+							<div class="service-details">
 
-{% for section in sections %}
-  <section class="service-intro" id="{{ section.slug }}">
-    <div class="container">
-      <h2>
-        <a href="/prestations/{{ section.slug }}">{{ section.nom }}</a>
-      </h2>
-      {% if section.description %}
-        <p>{{ section.description|nl2br }}</p>
-      {% endif %}
-    </div>
-  </section>
+								{% if prestation.tarifs is defined and prestation.tarifs|length %}
+									<h4>Tarifs :</h4>
+									<ul>
+										{% for tarif in prestation.tarifs %}
+											<li>
+												<strong>
+													{% set parts = [] %}
+													{% if tarif.duree %}
+														{% set parts = parts|merge([tarif.duree]) %}
+													{% endif %}
+													{% if tarif.nb_seances %}
+														{% set parts = parts|merge([tarif.nb_seances]) %}
+													{% endif %}
+													{{ parts|join(' - ') }}/{{ (tarif.prix ?? 0)|number_format(0, ',', ' ') }}€
+												</strong>
+											</li>
+										{% endfor %}
+									</ul>
+								{% else %}
+									<p>Tarifs à venir.</p>
+								{% endif %}
 
-  <section class="service-accordion">
-    <div class="container">
-      {% for prestation in section.prestations %}
-        <div class="accordion-item" id="presta-{{ prestation.id }}">
-          <div class="accordion-header">
-            <h3>{{ prestation.nom }}</h3>
-          </div>
+								{% if prestation.description %}
+									<p>{{ prestation.description|nl2br }}</p>
+								{% endif %}
 
-          <div class="accordion-content" style="display:block">
-            <div class="service-details">
+							</div>
+						</div>
+					</div>
+				{% else %}
+					<p>Aucune prestation dans cette catégorie pour le moment.</p>
+				{% endfor %}
+			</div>
+		</section>
+	{% endfor %}
 
-              {% if prestation.tarifs is defined and prestation.tarifs|length %}
-                <h4>Tarifs :</h4>
-                <ul>
-                  {% for tarif in prestation.tarifs %}
-                    <li>
-                      <strong>
-                        {% set parts = [] %}
-                        {% if tarif.duree %}{% set parts = parts|merge([tarif.duree]) %}{% endif %}
-                        {% if tarif.nb_seances %}{% set parts = parts|merge([tarif.nb_seances]) %}{% endif %}
-                        {{ parts|join(' - ') }}/{{ (tarif.prix ?? 0)|number_format(0, ',', ' ') }}€
-                      </strong>
-                    </li>
-                  {% endfor %}
-                </ul>
-              {% else %}
-                <p>Tarifs à venir.</p>
-              {% endif %}
-
-              {% if prestation.description %}
-                <p>{{ prestation.description|nl2br }}</p>
-              {% endif %}
-
-            </div>
-          </div>
-        </div>
-      {% else %}
-        <p>Aucune prestation dans cette catégorie pour le moment.</p>
-      {% endfor %}
-    </div>
-  </section>
-{% endfor %}
-
-<section class="main-content">
-  <div class="container" style="text-align:center;">
-    <a href="/rdv" class="btn">Prendre Rendez-Vous</a>
-  </div>
-</section>
+	<section class="main-content">
+		<div class="container" style="text-align:center;">
+			<a href="/rdv" class="btn">Prendre Rendez-Vous</a>
+		</div>
+	</section>
 {% endblock %}

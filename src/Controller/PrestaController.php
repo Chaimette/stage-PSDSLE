@@ -29,7 +29,7 @@ class PrestaController extends AbstractController
 
         return $this->render('prestations/index.html.twig', [
             'title'   => 'Toutes les prestations',
-            'sections' => $catalog, // tableau de sections avec prestations + tarifs
+            'sections' => $catalog,
         ]);
     }
 
