@@ -5,7 +5,9 @@
 
     const moreLi = navList.querySelector(".more");
     const moreMenu = document.getElementById("more-menu");
-    const candidates = Array.from(navList.querySelectorAll(".nav-item.can-overflow"));
+    
+    // Sélectionner tous les éléments qui peuvent déborder (y compris les dropdowns)
+    const candidates = Array.from(navList.querySelectorAll(".nav-item.can-overflow, .nav-item.dropdown:not(.more)"));
 
     let isFirstRender = true;
 
@@ -66,8 +68,22 @@
         const pool = Array.from(moreMenu.children).sort((a, b) => Number(a.dataset.index) - Number(b.dataset.index));
 
         for (const li of pool) {
-            navList.insertBefore(li, moreLi);
+            // Trouver la bonne position dans la nav en fonction de l'index
+            const targetIndex = Number(li.dataset.index);
+            let insertBefore = moreLi;
+            
+            // Chercher le premier élément visible avec un index supérieur
+            for (const candidate of candidates) {
+                if (candidate.parentElement === navList && Number(candidate.dataset.index) > targetIndex) {
+                    insertBefore = candidate;
+                    break;
+                }
+            }
+            
+            navList.insertBefore(li, insertBefore);
+            
             if (hasOverflow()) {
+                // Remettre dans "Autre" si ça déborde
                 moreMenu.insertBefore(li, moreMenu.firstChild);
                 break;
             }
@@ -122,53 +138,3 @@
     // Premier calcul immédiat
     rebalanceNav();
 })();
-
-// Accordeons page presta
-document.addEventListener("DOMContentLoaded", function () {
-
-    function toggleAccordion(header) {
-        const item = header.closest(".accordion-item");
-        const content = item.querySelector(".accordion-content");
-        const isOpen = item.classList.contains("open");
-
-        document.querySelectorAll(".accordion-item").forEach((otherItem) => {
-            if (otherItem !== item) {
-                otherItem.classList.remove("open");
-                const otherContent = otherItem.querySelector(".accordion-content");
-                if (otherContent) {
-                    otherContent.style.maxHeight = null;
-                }
-            }
-        });
-
-        if (isOpen) {
-            item.classList.remove("open");
-            content.style.maxHeight = null;
-            content.style.padding = '';
-        } else {
-            item.classList.add("open");
-            content.style.padding= "1.5rem";
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    }
-
-    document.querySelectorAll(".accordion-header").forEach((header) => {
-        header.addEventListener("click", function () {
-            toggleAccordion(this);
-        });
-    });
-
-    document.querySelectorAll(".accordion-header").forEach((header) => {
-        header.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleAccordion(this);
-            }
-        });
-
-        // Rendre focusable
-        header.setAttribute("tabindex", "0");
-        header.setAttribute("role", "button");
-        header.setAttribute("aria-expanded", "false");
-    });
-});
