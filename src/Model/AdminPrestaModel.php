@@ -7,7 +7,7 @@ use PDO;
 
 class AdminPrestaModel extends AbstractModel
 {
-    // / FONCTIONS ADMINS ///
+    /// FONCTIONS ADMINS ///
 
     public function createSection($data)
     {

@@ -1,4 +1,4 @@
-// Navigation responsive avec dropdown "Autre" et burger menu
+// navigation responsive avec dropdown "Autre" et burger menu
 (function () {
     const navList = document.getElementById("main-nav");
     if (!navList) return;
@@ -7,16 +7,14 @@
     const moreMenu = document.getElementById("more-menu");
     const soinsDd = navList.querySelector(".nav-item.dropdown:not(.more)");
     
-    // Sélectionner tous les éléments qui peuvent déborder
     const candidates = Array.from(navList.querySelectorAll(".nav-item.can-overflow, .nav-item.dropdown:not(.more)"));
 
     let isFirstRender = true;
     let isMobileView = false;
 
-    // On indexe les éléments pour le tri
+    // on indexe les éléments pour le tri
     candidates.forEach((li, idx) => (li.dataset.index = String(idx)));
 
-    // Créer le burger menu
     const burgerBtn = document.createElement("button");
     burgerBtn.className = "burger-menu";
     burgerBtn.setAttribute("aria-label", "Menu");
@@ -35,7 +33,7 @@
     nav.appendChild(burgerBtn);
     document.body.appendChild(mobileMenu);
 
-    // Gestion des dropdowns (desktop)
+    // gestion des dropdowns en desktop
     function closeAllDropdowns(except = null) {
         navList.querySelectorAll(".dropdown.open").forEach((li) => {
             if (li !== except) {
@@ -45,7 +43,7 @@
         });
     }
 
-    // Events pour les dropdowns (desktop)
+    // events pour les dropdowns en desktop
     navList.addEventListener("click", (e) => {
         if (isMobileView) return;
         
@@ -71,7 +69,6 @@
         }
     });
 
-    // Burger menu
     function toggleMobileMenu() {
         const isOpen = mobileMenu.classList.toggle("open");
         burgerBtn.classList.toggle("open");
@@ -91,17 +88,15 @@
         if (e.target === mobileMenu) closeMobileMenu();
     });
 
-    // Construire le menu mobile
     function buildMobileMenu() {
         const mobileList = mobileMenu.querySelector(".mobile-menu-list");
         mobileList.innerHTML = "";
 
-        // Récupérer tous les liens
         const allLinks = [];
         
         candidates.forEach((li) => {
             if (li.classList.contains("dropdown") && !li.classList.contains("more")) {
-                // Décomposer le dropdown "Soins"
+                // on décompose le dropdown Soins
                 const subMenu = li.querySelector(".dropdown-menu");
                 if (subMenu) {
                     subMenu.querySelectorAll("a").forEach((a) => {
@@ -109,7 +104,6 @@
                     });
                 }
             } else if (li.parentElement === navList || li.parentElement === moreMenu) {
-                // Liens simples
                 const link = li.querySelector("a");
                 if (link) {
                     allLinks.push({ href: link.href, text: link.textContent.trim() });
@@ -117,7 +111,6 @@
             }
         });
 
-        // Ajouter les liens du menu "Autre" s'ils existent
         Array.from(moreMenu.children).forEach((li) => {
             if (li.classList.contains("dropdown") && !li.classList.contains("more")) {
                 const subMenu = li.querySelector(".dropdown-menu");
@@ -134,7 +127,6 @@
             }
         });
 
-        // Créer les éléments du menu mobile
         allLinks.forEach((linkData) => {
             const li = document.createElement("li");
             const a = document.createElement("a");
@@ -146,7 +138,7 @@
         });
     }
 
-    // Gestion du dropdown "Soins"
+    // Gestion du dropdown Soins
     function expandSoinsInMore() {
         if (!soinsDd || soinsDd.parentElement !== moreMenu) return;
 
@@ -179,7 +171,6 @@
         }
     }
 
-    // Fonctions de gestion du overflow (desktop)
     function hasOverflow() {
         return navList.scrollWidth > navList.clientWidth + 1;
     }
@@ -196,7 +187,6 @@
         const li = visible[0];
         moreMenu.insertBefore(li, moreMenu.firstChild);
 
-        // Si c'est le dropdown "Soins", le décomposer
         if (li === soinsDd) {
             expandSoinsInMore();
         }
@@ -207,7 +197,6 @@
     function restoreFromMore() {
         if (moreMenu.children.length === 0) return;
 
-        // D'abord, recomposer "Soins" s'il est décomposé
         collapseSoinsFromMore();
 
         const pool = Array.from(moreMenu.children).filter(li => li.style.display !== "none");
@@ -227,7 +216,6 @@
             navList.insertBefore(li, insertBefore);
             
             if (hasOverflow()) {
-                // Remettre dans "Autre" si ça déborde
                 moreMenu.insertBefore(li, moreMenu.firstChild);
                 if (li === soinsDd) {
                     expandSoinsInMore();
@@ -262,20 +250,17 @@
         }
     }
 
-    // Gestion responsive
     function handleResize() {
         const wasMobile = isMobileView;
         isMobileView = window.innerWidth <= 900;
 
         if (isMobileView !== wasMobile) {
             if (isMobileView) {
-                // Passer en mode mobile
                 navList.style.display = "none";
                 burgerBtn.style.display = "flex";
                 buildMobileMenu();
                 closeMobileMenu();
             } else {
-                // Passer en mode desktop
                 navList.style.display = "flex";
                 burgerBtn.style.display = "none";
                 closeMobileMenu();
@@ -294,7 +279,6 @@
         new ResizeObserver(scheduleResize).observe(navList);
     }
 
-    // Initialisation
     document.addEventListener("DOMContentLoaded", handleResize);
     window.addEventListener("load", handleResize);
 
